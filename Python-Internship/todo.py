@@ -43,6 +43,22 @@ class Todo:
                         if line.strip() != look:
                             f.write(line)
 
+        def update():
+            selected_index = self.main_text.curselection()
+            if selected_index:
+                new_content = self.text.get(1.0, END).strip()
+                if new_content:
+                    self.main_text.delete(selected_index)
+                    self.main_text.insert(selected_index, new_content)
+                    with open("data.txt", "r") as f:
+                        lines = f.readlines()
+                    with open("data.txt", "w") as f:
+                        for line in lines:
+                            if line.strip() != self.main_text.get(selected_index):
+                                f.write(line)
+                        f.write(new_content + '\n')
+                    self.text.delete(1.0, END)
+
         try:
             with open("data.txt", "r") as file:
                 lines = file.readlines()
@@ -57,8 +73,11 @@ class Todo:
         self.button = Button(self.root, text="ADD", font="serif, 15", width=20, bd=2, bg="lightgreen", fg="black", command=add)
         self.button.place(x=10, y=200)
 
-        self.button2 = Button(self.root, text="ERASE", font="serif, 15", width=20, bd=2, bg="red", fg="black", command=delete)
+        self.button2 = Button(self.root, text="ERASE", font="serif, 15", width=20, bd=2, bg="maroon", fg="black", command=delete)
         self.button2.place(x=10, y=250)
+
+        self.button3 = Button(self.root, text="UPDATE", font="serif, 15", width=20, bd=2, bg="lightblue", fg="black", command=update)
+        self.button3.place(x=10, y=300)
 
 
 def main():
