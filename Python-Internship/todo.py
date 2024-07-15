@@ -26,6 +26,7 @@ class Todo:
         def add():
             content = self.text.get(1.0, END).strip()
             if content:
+                content = content + " [not done]"
                 self.main_text.insert(END, content)
                 with open("data.txt", "a") as file:
                     file.write(content + '\n')
@@ -46,18 +47,24 @@ class Todo:
         def update():
             selected_index = self.main_text.curselection()
             if selected_index:
-                new_content = self.text.get(1.0, END).strip()
-                if new_content:
-                    self.main_text.delete(selected_index)
-                    self.main_text.insert(selected_index, new_content)
-                    with open("data.txt", "r") as f:
-                        lines = f.readlines()
-                    with open("data.txt", "w") as f:
-                        for line in lines:
-                            if line.strip() != self.main_text.get(selected_index):
-                                f.write(line)
-                        f.write(new_content + '\n')
-                    self.text.delete(1.0, END)
+                content = self.main_text.get(selected_index)
+                if "[not done]" in content:
+                    new_content = content.replace("[not done]", "[done]")
+                elif "[done]" in content:
+                    new_content = content.replace("[done]", "[not done]")
+                else:
+                    new_content = content + " [done]"
+
+                self.main_text.delete(selected_index)
+                self.main_text.insert(selected_index, new_content)
+
+                with open("data.txt", "r") as f:
+                    lines = f.readlines()
+                with open("data.txt", "w") as f:
+                    for line in lines:
+                        if line.strip() != content:
+                            f.write(line)
+                    f.write(new_content + '\n')
 
         try:
             with open("data.txt", "r") as file:
